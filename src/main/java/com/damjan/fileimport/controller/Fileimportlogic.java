@@ -1,5 +1,6 @@
 package com.damjan.fileimport.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,14 +13,18 @@ import java.io.IOException;
 
 @Controller
 public class Fileimportlogic {
+    
+    // Injecting absolute path
+    @Value("${repoPath}")
+    private String repoPath;
 
-    // returns the view name for the upload page
+    // Returns the view name for the import page
     @GetMapping("/import")
     public String importer() {
-        return "importpage";  // returns the view name for the upload page
+        return "importpage";  // Returns importpage.html
     }
 
-    // Handle file upload
+    // Handle file import
     @PostMapping("/import")
     public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
         
@@ -30,7 +35,6 @@ public class Fileimportlogic {
 
         // Save the file
         try {
-            String repoPath = "/home/damjan/Desktop/semester/code/ip5/learnspringscratch/imported/";
             String filePath = repoPath + file.getOriginalFilename();
             file.transferTo(new File(filePath));
             redirectAttributes.addFlashAttribute("message", "You successfully uploaded '" + file.getOriginalFilename() + "'");
@@ -39,7 +43,7 @@ public class Fileimportlogic {
             redirectAttributes.addFlashAttribute("message", "Failed to upload file: " + e.getMessage());
         }
 
-        // Redirect back to the import page after upload
+        // Redirect back to the import page after import
         return "redirect:/import";
     }
 }
